@@ -70,10 +70,5 @@ alias battery='ioreg -l | grep -i IOBatteryInfo'
 alias sub='open -a Sublime\ Text\ 2.app'
 alias e='open -a TextMate.app'
 
-export AMAZON_ACCESKEY_ID=0GKYXHY98K7EQEB01M02
-export AMAZON_SECRET_ACCESSKEY=2HTBdGm+HyvUF/e/pFDSqJ4JcQnwCT0hQQnmQUvN
-export GOOGLE_LICENSE_KEY=hCalnq9QFHLUlIp6YwIXTj3POimT1KcR
-export AMAZON_LICENSE_KEY=DS6I04PXNWW8P
-export TECHNORATI_LICENSE_KEY=02714fa896dca1ac08a66a67fee3e734
 
 
