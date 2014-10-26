@@ -1,105 +1,96 @@
-" Use the Solarized Dark theme
-set background=dark
-colorscheme solarized
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"   Filename: .vimrc                                                         "
+" Maintainer: Michael J. Smalley <michaeljsmalley@gmail.com>                 "
+"        URL: http://github.com/michaeljsmalley/dotfiles                     "
+"                                                                            "
+"                                                                            "
+" Sections:                                                                  "
+"   01. General ................. General Vim behavior                       "
+"   02. Events .................. General autocmd events                     "
+"   03. Theme/Colors ............ Colors, fonts, etc.                        "
+"   04. Vim UI .................. User interface behavior                    "
+"   05. Text Formatting/Layout .. Text, tab, indentation related             "
+"   06. Custom Commands ......... Any custom command aliases                 "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Make Vim more useful
-set nocompatible
-" Use the OS clipboard by default (on versions compiled with `+clipboard`)
-set clipboard=unnamed
-" Enhance command-line completion
-set wildmenu
-" Allow cursor keys in insert mode
-set esckeys
-" Allow backspace in insert mode
-set backspace=indent,eol,start
-" Optimize for fast terminal connections
-set ttyfast
-" Add the g flag to search/replace by default
-set gdefault
-" Use UTF-8 without BOM
-set encoding=utf-8 nobomb
-" Change mapleader
-let mapleader=","
-" Don’t add empty newlines at the end of files
-set binary
-set noeol
-" Centralize backups, swapfiles and undo history
-set backupdir=~/.vim/backups
-set directory=~/.vim/swaps
-if exists("&undodir")
-	set undodir=~/.vim/undo
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 01. General                                                                "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nocompatible         " get rid of Vi compatibility mode. SET FIRST!
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 02. Events                                                                 "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+filetype plugin indent on " filetype detection[ON] plugin[ON] indent[ON]
+
+" In Makefiles DO NOT use spaces instead of tabs
+autocmd FileType make setlocal noexpandtab
+" In Ruby files, use 2 spaces instead of 4 for tabs
+autocmd FileType ruby setlocal sw=2 ts=2 sts=2
+
+" Enable omnicompletion (to use, hold Ctrl+X then Ctrl+O while in Insert mode.
+set ofu=syntaxcomplete#Complete
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 03. Theme/Colors                                                           "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set t_Co=256              " enable 256-color mode.
+syntax enable             " enable syntax highlighting (previously syntax on).
+colorscheme molokai       " set colorscheme
+
+" Prettify JSON files
+autocmd BufRead,BufNewFile *.json set filetype=json
+autocmd Syntax json sou ~/.vim/syntax/json.vim
+
+" Prettify Vagrantfile
+autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
+
+" Prettify Markdown files
+augroup markdown
+  au!
+  au BufNewFile,BufRead *.md,*.markdown setlocal filetype=ghmarkdown
+augroup END
+
+" Highlight characters that go over 80 columns (by drawing a border on the 81st)
+if exists('+colorcolumn')
+  set colorcolumn=81
+  highlight ColorColumn ctermbg=red
+else
+  highlight OverLength ctermbg=red ctermfg=white guibg=#592929
+  match OverLength /\%81v.\+/
 endif
 
-" Don’t create backups when editing files in certain directories
-set backupskip=/tmp/*,/private/tmp/*
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 04. Vim UI                                                                 "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set number                " show line numbers
+set numberwidth=6         " make the number gutter 6 characters wide
+set cul                   " highlight current line
+set laststatus=2          " last window always has a statusline
+set nohlsearch            " Don't continue to highlight searched phrases.
+set incsearch             " But do highlight as you type your search.
+set ignorecase            " Make searches case-insensitive.
+set ruler                 " Always show info along bottom.
+set showmatch
+set statusline=%<%f\%h%m%r%=%-20.(line=%l\ \ col=%c%V\ \ totlin=%L%)\ \ \%h%m%r%=%-40(bytval=0x%B,%n%Y%)\%P
+set visualbell
 
-" Respect modeline in files
-set modeline
-set modelines=4
-" Enable per-directory .vimrc files and disable unsafe commands in them
-set exrc
-set secure
-" Enable line numbers
-set number
-" Enable syntax highlighting
-syntax on
-" Highlight current line
-set cursorline
-" Make tabs as wide as two spaces
-set tabstop=2
-" Show “invisible” characters
-set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
-set list
-" Highlight searches
-set hlsearch
-" Ignore case of searches
-set ignorecase
-" Highlight dynamically as pattern is typed
-set incsearch
-" Always show status line
-set laststatus=2
-" Enable mouse in all modes
-set mouse=a
-" Disable error bells
-set noerrorbells
-" Don’t reset cursor to start of line when moving around.
-set nostartofline
-" Show the cursor position
-set ruler
-" Don’t show the intro message when starting Vim
-set shortmess=atI
-" Show the current mode
-set showmode
-" Show the filename in the window titlebar
-set title
-" Show the (partial) command as it’s being typed
-set showcmd
-" Use relative line numbers
-if exists("&relativenumber")
-	set relativenumber
-	au BufReadPost * set relativenumber
-endif
-" Start scrolling three lines before the horizontal window border
-set scrolloff=3
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 05. Text Formatting/Layout                                                 "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set autoindent            " auto-indent
+set tabstop=2             " tab spacing
+set softtabstop=2         " unify
+set shiftwidth=2          " indent/outdent by 2 columns
+set shiftround            " always indent/outdent to the nearest tabstop
+set expandtab             " use spaces instead of tabs
+set smartindent           " automatically insert one extra level of indentation
+set smarttab              " use tabs at the start of a line, spaces elsewhere
+set nowrap                " don't wrap text
 
-" Strip trailing whitespace (,ss)
-function! StripWhitespace()
-	let save_cursor = getpos(".")
-	let old_query = getreg('/')
-	:%s/\s\+$//e
-	call setpos('.', save_cursor)
-	call setreg('/', old_query)
-endfunction
-noremap <leader>ss :call StripWhitespace()<CR>
-" Save a file as root (,W)
-noremap <leader>W :w !sudo tee % > /dev/null<CR>
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 06. Custom Commands                                                        "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Automatic commands
-if has("autocmd")
-	" Enable file type detection
-	filetype on
-	" Treat .json files as .js
-	autocmd BufNewFile,BufRead *.json setfiletype json syntax=javascript
-	" Treat .md files as Markdown
-	autocmd BufNewFile,BufRead *.md setlocal filetype=markdown
-endif
+" Prettify JSON files making them easier to read
+command PrettyJSON %!python -m json.tool
